@@ -1,6 +1,6 @@
 module.exports = app => {
 
-    const { isNumberOrError, existsOrError, notExistsOrError, equalsOrError, existsRowsOrError, notExistsRowsOrError } = app.api.validation    
+    const { isNumberOrError, existsOrError } = app.api.validation    
     const { prePos } = app.api.common
 
     const deleteAssociation = async (req, res) => {

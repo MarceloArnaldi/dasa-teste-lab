@@ -1,6 +1,6 @@
 module.exports = app => {
 
-    const { isNumberOrError, existsOrError, notExistsOrError, equalsOrError, existsRowsOrError, notExistsRowsOrError, activeOrError } = app.api.validation
+    const { isNumberOrError, existsOrError, notExistsOrError, notExistsRowsOrError, activeOrError } = app.api.validation
     const { prePos } = app.api.common
 
     const save = async (req, res) => {
@@ -17,6 +17,12 @@ module.exports = app => {
                 .where({ nome: lab.nome }).first()
             if(!lab.id) {
                 notExistsOrError(labFromDB, 'Laboratório já cadastrado')
+            } else {
+                // garante ao alterar um laboratorio não coloque um nome que existe
+                const labFromDB = await app.db('labs')
+                    .whereNot({ id: lab.id })
+                    .where({ nome: lab.nome }).first()
+                notExistsOrError(labFromDB, 'Já existe um Laboratório com esse nome')                 
             }
         } catch(msg) {
             return res.status(400).send(msg)
@@ -91,7 +97,7 @@ module.exports = app => {
     }
 
     const addExam = async (req, res) => {
-        // USO : http://<servidor>/addExam/<id do laboratório>,<id do exame> - 
+        // USO : http://<servidor>/addExam/<id do laboratório>,<id do exame> 
 
         const param = req.params.association      
 
@@ -103,6 +109,16 @@ module.exports = app => {
         try {
             lab  = isNumberOrError(p[0], 'Valor não é numérico')
             exam = isNumberOrError(p[1], 'Valor não é numérico')
+            //
+            const status = await app.db('labs')
+                .select('status')
+                .where({ labs_id: lab })                
+                .equalsOrError(status,'inativo', 'O Laboratório esta Inativo')
+            ststus = await app.db('exams')
+                .select('status')
+                .where({ exams_id: exam })
+                .equalsOrError(status,'inativo', 'O Exame esta Inativo')
+            //
             const exist = await app.db('examsbylabs')
                 .where({ labs_id: lab })
                 .where({ exams_id: exam }).first()

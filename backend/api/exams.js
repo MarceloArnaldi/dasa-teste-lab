@@ -1,6 +1,6 @@
 module.exports = app => {
     
-    const { existsOrError, notExistsOrError, equalsOrError, existsRowsOrError, notExistsRowsOrError, activeOrError, examOrError } = app.api.validation
+    const { existsOrError, notExistsOrError, notExistsRowsOrError, activeOrError, examOrError } = app.api.validation
     
     const save = async (req, res) => {
         const exam = { ...req.body }
@@ -14,10 +14,15 @@ module.exports = app => {
             existsOrError(exam.status, 'Status não informada')
             activeOrError(exam.status, 'Valor de Status invalido')
             examOrError(exam.tipo, 'Tipo invalido')
-            const examFromDB = await app.db('exams')
-                .where({ nome: exam.nome }).first()
+            const examFromDB = await app.db('exams').where({ nome: exam.nome }).first()
             if(!exam.id) {
                 notExistsOrError(examFromDB, 'Exame já cadastrado')
+            } else {
+                // garante ao alterar um exame não coloque um nome que existe
+                const examFromDB = await app.db('exams')
+                    .whereNot({ id: exam.id })
+                    .where({ nome: exam.nome }).first()
+                notExistsOrError(examFromDB, 'Já existe um Exame com esse nome')
             }
         } catch(msg) {
             return res.status(400).send(msg)
@@ -69,7 +74,9 @@ module.exports = app => {
                 .where({ id: req.params.id })            
             if(req.params.id) {
                 notExistsRowsOrError(examFromDB, 'Exame não existes')
-            }                                    
+            } 
+            const exams = await app.db('examsbylabs').where({ 'exams_id': req.params.id })
+            notExistsOrError(exams, 'Exame existe em laboratórios')                                   
             const rowsDeleted = await app.db('exams')
                 .where({ id: req.params.id }).del()
             existsOrError(rowsDeleted, 'Exame não foi excluido.')
