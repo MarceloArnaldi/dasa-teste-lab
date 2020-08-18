@@ -14,7 +14,33 @@ module.exports = app => {
     app.route('/labByName/:nome') 
         .get(app.api.labs.getByName)
 
+    app.route('/getLabExams/:nome') 
+        .get(app.api.labs.getLabExams)
+
+    app.route('/addExam/:association') 
+        .post(app.api.labs.addExam)
+
+    // Exams
+
+    app.route('/exams')
+        .post(app.api.exams.save)
+        .get(app.api.exams.get)
+
+    app.route('/exams/:id') 
+        .put(app.api.exams.save)
+        .get(app.api.exams.getById)
+        .delete(app.api.exams.remove)
     
+    app.route('/examByName/:nome') 
+        .get(app.api.exams.getByName)
+    
+    app.route('/getWhereExams/:nome') 
+        .get(app.api.exams.getWhereExams)
+
+    // Exams by Labs
+
+    app.route('/delAssoc/:association') 
+        .delete(app.api.examsbylabs.deleteAssociation)
 
         
 }

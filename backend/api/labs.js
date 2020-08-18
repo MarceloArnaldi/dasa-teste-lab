@@ -37,7 +37,8 @@ module.exports = app => {
 
     const get = (req, res) => {
         app.db('labs')
-            .select('id', 'nome', 'endereco', 'status')   
+            .select('id', 'nome', 'endereco', 'status')
+            .where('status','ativo')
             .then(labs => res.json(labs))
             .catch(err => res.status(500).send(err))
     }
