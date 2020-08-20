@@ -105,3 +105,7 @@ dist
 backend/migrations/20200817190407_create_table_labs.js
 backend/migrations/20200817190416_create_table_exams.js
 backend/migrations/20200817190423_create_table_examsbylabs.js
+
+# macOS operation system 
+._.DS_Store
+.DS_Store

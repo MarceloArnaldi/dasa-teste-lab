@@ -1,0 +1,32 @@
+FROM node:current-alpine
+
+RUN mkdir -p /usr/src/app
+RUN mkdir -p /usr/src/app/api
+RUN mkdir -p /usr/src/app/config
+RUN mkdir -p /usr/src/app/entities
+RUN mkdir -p /usr/src/app/test
+
+WORKDIR /usr/src/app/
+
+COPY package*.json /usr/src/app/
+
+RUN npm install
+RUN npm i -g knex 
+RUN knex init
+
+COPY . /usr/src/app
+COPY ./api /usr/src/app/api
+COPY ./config /usr/src/app/config
+COPY ./entities /usr/src/app/entities
+COPY ./test /usr/src/app/test
+COPY . /usr/src/app
+
+RUN knex migrate:make create_table_labs
+RUN knex migrate:make create_table_exams
+RUN knex migrate:make create_table_examsbylabs
+
+EXPOSE 3000
+
+#ENV NODE_ENV=production
+
+CMD ["npm", "start"]

@@ -15,11 +15,11 @@ postgres
 <br>
 Download e instalação no site oficial: https://www.postgresql.org/download/
 <br><br>
-Anote a senha.
+Anote o usuário e senha.
 
 Entre na linha de comando do PostgreSQL
 ```sh
-psql -U postgres
+psql -U <nome-do-usuario>
 ```
 
 Crie o banco de dados
@@ -32,34 +32,14 @@ CREATE DATABASE <nome-do-banco>
 ```sh
 git clone https://github.com/MarceloArnaldi/dasa-teste-lab
 cd .../dasa-teste-lab/backend/
-sudo npm i
+npm i
 knex init
 knex migrate:make create_table_labs
 knex migrate:make create_table_exams
 knex migrate:make create_table_examsbylabs
-```
-
-Atualize o arquivo `knexfile.js` na raiz do projeto deixando somente o nome do banco de dados, usuário e senha. 
-```
-module.exports = {
-
-  client: 'postgresql',
-  connection: {
-    database: '<data-base>',
-    user:     'postgres',
-    password: '<senha>'
-  },
-  pool: {
-    min: 2,
-    max: 10
-  },
-  migrations: {
-    tableName: 'knex_migrations'
-  }
-
-};
 
 ```
+Atualize o arquivo `knexfile.js` na raiz do projeto com o nome do banco de dados, usuário e senha.
 
 Copie e cole o conteúdo dos arquivos de `/entidades/` para os equivalentes em `/migrations/`
 * create_table_labs.js --> em /migrations/<data-hora>create_table_labs.js
@@ -76,8 +56,6 @@ knex migrate:latest
 Para colocar o servidor no ar:
 
 ```sh
-node index
-ou
 npm start
 ```
 
@@ -87,21 +65,7 @@ Nos arquivos de teste mude o endereço e porta para a localização onde o servi
 Para executar os teste use:
 
 ```sh
-sudo npm i -D jest
 npm test
-```
-
-## Docker
-
-A imagem do projeto esta em Docker-compose
-```sh
-cd .../docker-compose/backend
-docker-compose up -d
-```
-Para parar o docker
-```sh
-cd .../docker-compose/backend
-docker-compose down
 ```
 
 ## Metodos

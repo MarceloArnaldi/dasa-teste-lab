@@ -4,9 +4,9 @@ module.exports = {
 
   client: 'postgresql',
   connection: {
-    database: 'dasa_teste',
+    database: 'dasa',
     user:     'postgres',
-    password: 'ariane'
+    password: '<senha>'
   },
   pool: {
     min: 2,

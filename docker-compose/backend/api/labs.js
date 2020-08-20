@@ -135,6 +135,7 @@ module.exports = app => {
 
     }
     
+
     return { save, get, getById, getByName, remove, getLabExams, addExam  }
 
 }
