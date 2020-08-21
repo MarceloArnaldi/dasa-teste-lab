@@ -109,3 +109,4 @@ backend/migrations/20200817190423_create_table_examsbylabs.js
 # macOS operation system 
 ._.DS_Store
 .DS_Store
+migrations

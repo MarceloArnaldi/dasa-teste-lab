@@ -75,7 +75,7 @@ module.exports = app => {
             const labFromDB = await app.db('labs')
                 .where({ id: req.params.id })            
             if(req.params.id) {
-                notExistsRowsOrError(labFromDB, 'Laboratório não existes')
+                notExistsRowsOrError(labFromDB, 'Laboratório não existe')
             }                                    
             const rowsDeleted = await app.db('labs')
                 .where({ id: req.params.id }).del()
@@ -86,7 +86,8 @@ module.exports = app => {
         }
     }                  
     
-    const getLabExams = (req, res) => {       
+    const getLabExams = (req, res) => {  
+        
         app.db({l:'labs', e:'exams', b: 'examsbylabs'})            
             .select('e.nome as Exame')
             .where('l.id', app.db.raw('??', ['b.labs_id']))            
@@ -94,47 +95,9 @@ module.exports = app => {
             .where('l.nome',req.params.nome) 
             .then(lab => res.json(lab))
             .catch(err => res.status(500).send(err))
-    }
-
-    const addExam = async (req, res) => {
-        // USO : http://<servidor>/addExam/<id do laboratório>,<id do exame> 
-
-        const param = req.params.association      
-
-        let lab  = 0;
-        let exam = 0;
-
-        p = prePos(param)
-
-        try {
-            lab  = isNumberOrError(p[0], 'Valor não é numérico')
-            exam = isNumberOrError(p[1], 'Valor não é numérico')
-            //
-            const status = await app.db('labs')
-                .select('status')
-                .where({ labs_id: lab })                
-                .equalsOrError(status,'inativo', 'O Laboratório esta Inativo')
-            ststus = await app.db('exams')
-                .select('status')
-                .where({ exams_id: exam })
-                .equalsOrError(status,'inativo', 'O Exame esta Inativo')
-            //
-            const exist = await app.db('examsbylabs')
-                .where({ labs_id: lab })
-                .where({ exams_id: exam }).first()
-            notExistsOrError(exist, 'Associação já Existente')
-        } catch(msg) {
-            return res.status(400).send(msg)
-        }            
         
-        const assoc = [{labs_id: lab , exams_id: exam}]        
-        app.db('examsbylabs')
-            .insert(assoc)
-            .then(_ => res.status(204).send())
-            .catch(err => res.status(500).send(err))
-
     }
     
-    return { save, get, getById, getByName, remove, getLabExams, addExam  }
+    return { save, get, getById, getByName, remove, getLabExams  }
 
 }

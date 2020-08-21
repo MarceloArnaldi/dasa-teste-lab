@@ -18,7 +18,7 @@ module.exports = app => {
         .get(app.api.labs.getLabExams)
 
     app.route('/addExam/:association') 
-        .post(app.api.labs.addExam)
+        .post(app.api.examsbylabs.addExam)
 
     // Exams
 

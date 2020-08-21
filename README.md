@@ -104,6 +104,12 @@ cd .../docker-compose/backend
 docker-compose down
 ```
 
+## Instancia Hospedada no GCP
+```
+https://getgit.rj.r.appspot.com
+```
+
+
 ## Metodos
 
 ### Consulta de Laboratórios

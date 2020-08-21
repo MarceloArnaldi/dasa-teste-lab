@@ -30,9 +30,69 @@ module.exports = app => {
         } catch(msg) {
             return res.status(400).send(msg)
         }            
-    
+        
     }
 
-    return { deleteAssociation  }
+    const addExam = async (req, res) => {
+
+        const param = req.params.association      
+
+        let lab  = 0;
+        let exam = 0;
+
+        p = prePos(param)
+        
+        
+        try {
+            lab  = isNumberOrError(p[0], 'Valor não é numérico')
+            exam = isNumberOrError(p[1], 'Valor não é numérico')
+
+            app.db('labs')
+                .select()
+                .where({ id: lab })            
+                .first()
+                .then(lab => {                
+                    if (typeof(lab) === 'undefined') { 
+                        return res.status(400).send('Laboratório não existe')
+                    }
+                    if (lab.status === 'inativo') { return res.status(400).send('O Laboratório esta Inativo') }            
+                })
+
+            app.db('exams')
+                .select()
+                .where({ id: exam })            
+                .first()
+                .then(exam => {                            
+                    if (typeof(exam) === 'undefined') { 
+                        return res.status(400).send('Exame não existe')
+                    }
+                    if (exam.status === 'inativo') { return res.status(400).send('O Exame esta Inativo') }            
+                })
+
+            
+            const exist = await app.db('examsbylabs')
+                .where({ labs_id: lab })
+                .where({ exams_id: exam })
+                .first()
+                .then(exam => {                            
+                    if (typeof(exam) !== 'undefined') { 
+                        return res.status(400).send('Associação já Existente')
+                    }
+                })
+            
+
+            const assoc = [{labs_id: lab , exams_id: exam}]        
+                app.db('examsbylabs')
+                    .insert(assoc)
+                    .then(_ => res.status(204).send())
+                    .catch(err => res.status(500).send(err))            
+            
+        } catch(msg) {
+            return res.status(400).send(msg)
+        } 
+
+    }
+
+    return { deleteAssociation, addExam  }
 
 }
